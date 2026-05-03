@@ -1,0 +1,28 @@
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "9000:27017"
+    environment:
+      MONGODB_INITDB_ROOT_USERNAME: mongouser
+      MONGODB_INITDB_ROOT_PASSWORD: mongopassword
+    volumes:
+      - mongodb_data:/app/data/db
+    networks:
+      - generative-cybersecurity-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 300s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    command: ["mongod", "--logpath", "/dev/null", "--quiet"]
+
+networks:
+  generative-cybersecurity-network:
+    external: true
+
+volumes:
+  mongodb_data:
